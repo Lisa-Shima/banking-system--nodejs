@@ -10,8 +10,15 @@ const pool = new Pool({
     port: process.env.DB_PORT
 })
 
-pool.connect()
-.then(() => {console.log("Connected to db successfully")})
-.catch(err => console.error("Connection error: ", err))
+const connectDB = async () => {
+    try{
+        pool.connect()
+        console.log("Connected to db successfully")
+    }
+    catch(err){
+        console.error("Connection error: ", err)
+    }
+}
 
-module.exports = pool
+
+module.exports = {connectDB, pool}
