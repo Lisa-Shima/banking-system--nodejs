@@ -29,4 +29,15 @@ const getUsers = async() => {
     return result.rows
 }
 
-module.exports = { createUser, getUser, getUsers }
+const updateUser = async(id, name, email, password) => {
+    const query = `
+    UPDATE users SET name = $1, email = $2, password = $3
+    WHERE id = $4
+    `
+
+    const values = [name, email, password, id]
+    const result = await pool.query(query, values)
+    return {id, name, email, password}
+}
+
+module.exports = { createUser, getUser, getUsers, updateUser }
