@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { createUser, getUser, getUsers, updateUser } = require("../models/User")
+const { createUser, getUser, getUsers, updateUser, deleteUser } = require("../models/User")
 
 const hashPassword = async(password) => {
     const salt = 10
@@ -74,4 +74,20 @@ const updateUserById = async(req, res) => {
     }
 }
 
-module.exports = { registerUser, getUserById, getAllUsers, updateUserById }
+const deleteUserById = async(req, res) => {
+    const id = req.params.id
+
+    try{
+        const user = await deleteUser(id)
+        if(!user){
+            return res.status(404).json({message: 'User not found'})
+        }
+        res.status(200).json(user)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+module.exports = { registerUser, getUserById, getAllUsers, updateUserById, deleteUserById }

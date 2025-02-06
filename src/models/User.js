@@ -40,4 +40,14 @@ const updateUser = async(id, name, email, password) => {
     return {id, name, email, password}
 }
 
-module.exports = { createUser, getUser, getUsers, updateUser }
+const deleteUser = async(id) => {
+    const query = `
+    DELETE FROM users
+    WHERE id = $1
+    `
+    const values = [id]
+    const result = await pool.query(query, values)
+    return {id, message: "User deleted successfully"}
+}
+
+module.exports = { createUser, getUser, getUsers, updateUser, deleteUser }
