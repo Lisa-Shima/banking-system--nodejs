@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const { createUser, getUser } = require("../models/User")
+const { createUser, getUser, getUsers } = require("../models/User")
 
 const registerUser = async(req, res) => {
     try{
@@ -10,7 +10,7 @@ const registerUser = async(req, res) => {
         }
 
         const salt = 10
-        const hashedPassword = bcrypt.hash(password, salt)
+        const hashedPassword = await bcrypt.hash(password, salt)
 
         const newUser = await createUser(name, email, hashedPassword)
         res.status(200).json(newUser)
@@ -39,4 +39,15 @@ const getUserById = async(req, res) => {
     }
 }
 
-module.exports = { registerUser, getUserById }
+const getAllUsers = async(req, res) => {
+    try{
+        const users = await getUsers()
+        res.status(200).json(users)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+module.exports = { registerUser, getUserById, getAllUsers }
