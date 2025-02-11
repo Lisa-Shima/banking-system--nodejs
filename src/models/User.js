@@ -50,4 +50,12 @@ const deleteUser = async(id) => {
     return {id, message: "User deleted successfully"}
 }
 
-module.exports = { createUser, getUser, getUsers, updateUser, deleteUser }
+const getUserByEmail = async(email) => {
+    const query = `
+    SELECT * FROM users WHERE email = $1
+    `
+    const result = await pool.query(query, [email])
+    return result.rows[0]
+}
+
+module.exports = { createUser, getUser, getUsers, updateUser, deleteUser, getUserByEmail }

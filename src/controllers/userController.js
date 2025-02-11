@@ -1,5 +1,10 @@
 const bcrypt = require('bcrypt')
-const { createUser, getUser, getUsers, updateUser, deleteUser } = require("../models/User")
+const { createUser, getUser, getUsers, updateUser, deleteUser, getUserByEmail } = require("../models/User")
+const jwt = require("jsonwebtoken")
+
+const generateToken = (id) => {
+    return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: '30d'})
+}
 
 const hashPassword = async(password) => {
     const salt = 10
@@ -90,4 +95,27 @@ const deleteUserById = async(req, res) => {
     }
 }
 
-module.exports = { registerUser, getUserById, getAllUsers, updateUserById, deleteUserById }
+const login = async(req, res) => {
+    try{
+        const { email, password } = req.body    
+        const user = await getUserByEmail(email)
+
+        if(!user){
+            return res.status(404).json({message: 'User not found'})
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password)
+        if(!isValidPassword){
+            return res.status(401).json({message: 'Invalid password'})
+        }
+
+        const token = await generateToken(user._id)
+        res.status(200).json({user: {id: user.id, name: user.name, email: user.email}, token})
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+module.exports = { registerUser, getUserById, getAllUsers, updateUserById, deleteUserById, login }
