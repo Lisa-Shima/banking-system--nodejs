@@ -1,4 +1,4 @@
-const { createAccount } = require('../models/Account')
+const { createAccount, getAccounts } = require('../models/Account')
 const crypto = require('crypto')
 
 const registerAccount = async(req, res) => {
@@ -16,4 +16,19 @@ const registerAccount = async(req, res) => {
     }
 }
 
-module.exports = { registerAccount }
+const findAccounts = async(req, res) => {
+    const userId = req.user.id
+    try{
+        const accounts = await getAccounts(userId)
+        if(!accounts) {
+            return res.status(200).json({message: 'You have no accounts created'})
+        }
+        res.status(200).json(accounts)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+module.exports = { registerAccount, findAccounts }

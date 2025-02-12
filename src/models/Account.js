@@ -19,4 +19,12 @@ const createAccount = async(userId, accountNumber) => {
     return result.rows[0]
 }
 
-module.exports = { createAccount }
+const getAccounts = async(userId) => {
+    const query = `
+    SELECT * FROM accounts WHERE user_id = $1;
+    `
+    const results = await pool.query(query, [userId])
+    return results.rows
+}
+
+module.exports = { createAccount, getAccounts }
