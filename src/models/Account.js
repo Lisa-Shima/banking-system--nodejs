@@ -27,4 +27,12 @@ const getAccounts = async(userId) => {
     return results.rows
 }
 
-module.exports = { createAccount, getAccounts }
+const getAccountByAccountNumber = async(userId, accountNumber) => {
+    const query = `
+    SELECT * FROM accounts WHERE user_id = $1 AND account_number = $2
+    `
+    const result = await pool.query(query, [userId, accountNumber])
+    return result.rows[0]
+}
+
+module.exports = { createAccount, getAccounts, getAccountByAccountNumber }
