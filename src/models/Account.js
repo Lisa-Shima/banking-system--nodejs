@@ -35,4 +35,13 @@ const getAccountByAccountNumber = async(userId, accountNumber) => {
     return result.rows[0]
 }
 
-module.exports = { createAccount, getAccounts, getAccountByAccountNumber }
+const deleteAccountByAccountNumber = async(userId, accountNumber) => {
+    const query = `
+    DELETE FROM accounts WHERE user_id = $1 AND account_number = $2
+    `
+
+    const result = await pool.query(query, [userId, accountNumber])
+    return {userId, accountNumber, message: "Account deleted successfully"}
+}
+
+module.exports = { createAccount, getAccounts, getAccountByAccountNumber, deleteAccountByAccountNumber }

@@ -1,4 +1,4 @@
-const { createAccount, getAccounts, getAccountByAccountNumber } = require('../models/Account')
+const { createAccount, getAccounts, getAccountByAccountNumber, deleteAccountByAccountNumber } = require('../models/Account')
 const crypto = require('crypto')
 
 const registerAccount = async(req, res) => {
@@ -47,4 +47,20 @@ const findAccountByAccountNumber = async(req, res) => {
     }
 }
 
-module.exports = { registerAccount, findAccounts, findAccountByAccountNumber }
+const deleteAccountUsingAccountNumber = async(req, res) => {
+    const userId = req.user.id;
+    const accountNumber = req.params.account_number
+    try{
+        const account = await deleteAccountByAccountNumber(userId, accountNumber)
+        if(!account){
+            return res.status(404).json({message: 'Account not found'})
+        }
+        res.status(200).json(account)
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal Server Error'})
+    }
+}
+
+module.exports = { registerAccount, findAccounts, findAccountByAccountNumber, deleteAccountUsingAccountNumber }
